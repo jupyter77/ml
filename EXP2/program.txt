@@ -1,0 +1,92 @@
+# =====================================================================
+# IMPLEMENTATION OF LOGISTIC REGRESSION ALGORITHM
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# STEP 1: Import all necessary libraries
+# ---------------------------------------------------------------------
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+
+print("--- Step 1: All libraries imported successfully ---")
+
+
+# ---------------------------------------------------------------------
+# STEP 2: Load the dataset (userdata.csv)
+# ---------------------------------------------------------------------
+dataset = pd.read_csv('userdata.csv')
+
+print("\n--- Step 2: Dataset Preview (First 5 Rows): ---")
+print(dataset.head())
+
+
+# ---------------------------------------------------------------------
+# STEP 3: Split the dataset into Independent (X) and Dependent (y) variables
+# ---------------------------------------------------------------------
+# Selecting index 2 (Age) and index 3 (EstimatedSalary) for features
+# Selecting index 4 (Purchased) for target output
+X = dataset.iloc[:, [2, 3]].values   # Independent variables (Age and Salary)
+y = dataset.iloc[:, 4].values        # Dependent variable (Purchased: 0 or 1)
+
+
+# ---------------------------------------------------------------------
+# STEP 4: Split the dataset into Training and Testing sets (75% Train, 25% Test)
+# ---------------------------------------------------------------------
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+
+# ---------------------------------------------------------------------
+# STEP 5: Feature Scaling
+# ---------------------------------------------------------------------
+# Standardizing features due to large variance between Age values and Salary values
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+
+# ---------------------------------------------------------------------
+# STEP 6: Initialize and Train the Logistic Regression model
+# ---------------------------------------------------------------------
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+print("\n--- Step 6: Logistic Regression Model Training Completed ---")
+
+
+# ---------------------------------------------------------------------
+# STEP 7: Predict the Test set results
+# ---------------------------------------------------------------------
+y_pred = model.predict(X_test)
+
+
+# ---------------------------------------------------------------------
+# STEP 8: Evaluate the model
+# ---------------------------------------------------------------------
+cm = confusion_matrix(y_test, y_pred)
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\n" + "="*40)
+print("LOGISTIC REGRESSION EVALUATION RESULTS")
+print("="*40)
+print("Confusion Matrix:\n", cm)
+print(f"\nAccuracy Score: {accuracy * 100:.2f}%")
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+
+# ---------------------------------------------------------------------
+# STEP 9: Predict result for a new customer (Example)
+# ---------------------------------------------------------------------
+# Example feature inputs: Age = 30, Salary = 50,000
+new_customer = [[30, 50000]]
+new_customer_scaled = sc.transform(new_customer) # Scale features before prediction
+prediction = model.predict(new_customer_scaled)
+
+print("\n" + "="*40)
+print(f"Prediction for New Customer (Age: 30, Salary: 50000): {prediction[0]}")
+print("-> (1 means customer will buy, 0 means customer will not buy)")
+print("="*40)
