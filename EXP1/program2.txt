@@ -1,0 +1,45 @@
+# Simple Linear Regression - House Price Prediction (Fixed)
+
+# Importing the libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Importing the dataset
+dataset = pd.read_csv('housing.csv')
+
+# सुरक्षित पद्धत: पहिला कॉलम X मध्ये आणि शेवटचा कॉलम y मध्ये घेणे
+X = dataset.iloc[:, [0]].values   # पहिला कॉलम (उदा. Size)
+y = dataset.iloc[:, -1].values    # शेवटचा कॉलम (उदा. Price)
+
+# डेटा योग्य प्रकारे लोड झालाय का आणि दोन्हीचा आकार सारखा आहे का ते तपासूया
+print("X  (Rows, Columns):", X.shape)
+print("y  (Rows,):", y.shape)
+
+# Splitting the dataset into the Training set and Test set (80% Train, 20% Test)
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state = 0)
+
+# Fitting Simple Linear Regression to the Training set
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+# Predicting the Test set results
+y_pred = regressor.predict(X_test)
+
+# Visualising the Training set results
+plt.scatter(X_train, y_train, color = 'red')
+plt.plot(X_train, regressor.predict(X_train), color = 'blue')
+plt.title('Price vs Size (Training set)')
+plt.xlabel('Size of House (Sqft)')
+plt.ylabel('Price of House')
+plt.show()
+
+# Visualising the Test set results
+plt.scatter(X_test, y_test, color = 'red')
+plt.plot(X_train, regressor.predict(X_train), color = 'blue')
+plt.title('Price vs Size (Test set)')
+plt.xlabel('Size of House (Sqft)')
+plt.ylabel('Price of House')
+plt.show()
